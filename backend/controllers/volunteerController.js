@@ -177,11 +177,6 @@ exports.respondToRequest = async (req, res) => {
     request.volunteerId = status === 'accepted' ? volunteerProfile._id : null;
     await request.save();
 
-    if (status === 'accepted') {
-      volunteerProfile.completedExams += 1;
-      await volunteerProfile.save();
-    }
-
     // Send email notification to student
     try {
       await sendEmail({
