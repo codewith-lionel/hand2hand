@@ -242,3 +242,79 @@ exports.getAssignedExams = async (req, res) => {
     });
   }
 };
+
+// @desc    Mark exam as completed
+// @route   PUT /api/volunteers/exams/:id/complete
+// @access  Private (Volunteer)
+exports.completeExam = async (req, res) => {
+  try {
+    const volunteerProfile = await Volunteer.findOne({ userId: req.user.id });
+
+    if (!volunteerProfile) {
+      return res.status(400).json({
+        success: false,
+        message: 'Volunteer profile not found'
+      });
+    }
+
+    const request = await Request.findById(req.params.id).populate({
+      path: 'studentId',
+      populate: { path: 'userId' }
+    });
+
+    if (!request) {
+      return res.status(404).json({
+        success: false,
+        message: 'Request not found'
+      });
+    }
+
+    if (request.volunteerId.toString() !== volunteerProfile._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to complete this exam'
+      });
+    }
+
+    if (request.status === 'completed') {
+      return res.status(400).json({
+        success: false,
+        message: 'Exam is already marked as completed'
+      });
+    }
+
+    request.status = 'completed';
+    await request.save();
+
+    // Update volunteer's completed exams count
+    volunteerProfile.completedExams += 1;
+    await volunteerProfile.save();
+
+    // Send email notification to student
+    try {
+      await sendEmail({
+        email: request.studentId.userId.email,
+        subject: 'Exam Completed - Hand2Hand',
+        html: `
+          <h2>Exam Completed</h2>
+          <p>Your exam for ${request.examDetails.subject} has been marked as completed.</p>
+          <p><strong>Exam Date:</strong> ${new Date(request.examDetails.date).toLocaleDateString()}</p>
+          <p><strong>Volunteer:</strong> ${req.user.name}</p>
+          <p>Thank you for using Hand2Hand!</p>
+        `
+      });
+    } catch (emailError) {
+      console.error('Email notification failed:', emailError);
+    }
+
+    res.status(200).json({
+      success: true,
+      data: request
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

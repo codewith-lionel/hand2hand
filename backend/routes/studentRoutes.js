@@ -5,7 +5,8 @@ const {
   getProfile,
   updateProfile,
   getVolunteers,
-  createRequest
+  createRequest,
+  getStudentRequests
 } = require('../controllers/studentController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -18,6 +19,8 @@ router.route('/profile')
   .put(updateProfile);
 
 router.get('/volunteers', getVolunteers);
-router.post('/requests', createRequest);
+router.route('/requests')
+  .get(getStudentRequests)
+  .post(createRequest);
 
 module.exports = router;

@@ -6,7 +6,8 @@ const {
   updateProfile,
   getRequests,
   respondToRequest,
-  getAssignedExams
+  getAssignedExams,
+  completeExam
 } = require('../controllers/volunteerController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -21,5 +22,6 @@ router.route('/profile')
 router.get('/requests', getRequests);
 router.put('/requests/:id/respond', respondToRequest);
 router.get('/assigned-exams', getAssignedExams);
+router.put('/exams/:id/complete', completeExam);
 
 module.exports = router;

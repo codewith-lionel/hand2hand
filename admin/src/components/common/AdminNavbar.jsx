@@ -12,29 +12,31 @@ const AdminNavbar = () => {
   };
 
   return (
-    <nav style={styles.nav}>
-      <div style={styles.container}>
-        <Link to="/admin" style={styles.brand}>
-          Hand2Hand Admin
+    <nav className="admin-navbar">
+      <div className="admin-navbar-container">
+        <Link to="/admin" className="admin-navbar-brand">
+          🛡️ Hand2Hand Admin
         </Link>
-        <div style={styles.links}>
+        <div className="admin-navbar-links">
           {admin ? (
             <>
-              <span style={styles.user}>{admin.name}</span>
-              <Link to="/admin/dashboard" style={styles.link}>
-                Dashboard
+              <span className="admin-navbar-user">
+                👤 {admin.name}
+              </span>
+              <Link to="/admin/dashboard" className="admin-navbar-link">
+                📊 Dashboard
               </Link>
-              <Link to="/admin/users" style={styles.link}>
-                Users
+              <Link to="/admin/users" className="admin-navbar-link">
+                👥 Users
               </Link>
-              <Link to="/admin/volunteers" style={styles.link}>
-                Volunteers
+              <Link to="/admin/volunteers" className="admin-navbar-link">
+                🤝 Volunteers
               </Link>
-              <Link to="/admin/requests" style={styles.link}>
-                Requests
+              <Link to="/admin/requests" className="admin-navbar-link">
+                📋 Requests
               </Link>
-              <button onClick={handleLogout} style={styles.button}>
-                Logout
+              <button onClick={handleLogout} className="admin-navbar-button">
+                🚪 Logout
               </button>
             </>
           ) : null}
@@ -42,50 +44,6 @@ const AdminNavbar = () => {
       </div>
     </nav>
   );
-};
-
-const styles = {
-  nav: {
-    backgroundColor: '#34495e',
-    padding: '1rem 0',
-    marginBottom: '2rem'
-  },
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '0 2rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  brand: {
-    color: '#fff',
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    textDecoration: 'none'
-  },
-  links: {
-    display: 'flex',
-    gap: '1rem',
-    alignItems: 'center'
-  },
-  link: {
-    color: '#fff',
-    textDecoration: 'none',
-    padding: '0.5rem 1rem'
-  },
-  user: {
-    color: '#ecf0f1',
-    fontWeight: 'bold'
-  },
-  button: {
-    backgroundColor: '#e74c3c',
-    color: '#fff',
-    border: 'none',
-    padding: '0.5rem 1rem',
-    cursor: 'pointer',
-    borderRadius: '4px'
-  }
 };
 
 export default AdminNavbar;

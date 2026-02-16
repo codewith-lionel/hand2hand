@@ -114,273 +114,167 @@ const VolunteerProfile = () => {
   };
 
   if (loading) {
-    return <div style={styles.loading}>Loading...</div>;
+    return <div className="loading">🔄 Loading profile...</div>;
   }
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>{profile ? 'Update' : 'Create'} Volunteer Profile</h2>
-      {message && (
-        <div style={message.includes('Error') ? styles.error : styles.success}>
-          {message}
-        </div>
-      )}
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <h3>Education</h3>
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Degree</label>
-          <input
-            type="text"
-            name="education.degree"
-            value={formData.education.degree}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </div>
+    <div className="page-container">
+      <div className="content-wrapper fade-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <h2 className="form-title">{profile ? '✏️ Update' : '✨ Create'} Volunteer Profile</h2>
+        {message && (
+          <div className={message.includes('Error') ? 'alert alert-error' : 'alert alert-success'}>
+            {message}
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <h3 className="text-primary mt-3 mb-2">🎓 Education</h3>
+          <div className="form-group">
+            <label className="form-label">Degree</label>
+            <input
+              type="text"
+              name="education.degree"
+              value={formData.education.degree}
+              onChange={handleChange}
+              required
+              className="form-input"
+              placeholder="e.g., B.Sc. Computer Science"
+            />
+          </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Institution</label>
-          <input
-            type="text"
-            name="education.institution"
-            value={formData.education.institution}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </div>
+          <div className="form-group">
+            <label className="form-label">Institution</label>
+            <input
+              type="text"
+              name="education.institution"
+              value={formData.education.institution}
+              onChange={handleChange}
+              required
+              className="form-input"
+              placeholder="Enter your institution name"
+            />
+          </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Graduation Year</label>
-          <input
-            type="number"
-            name="education.year"
-            value={formData.education.year}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </div>
+          <div className="form-group">
+            <label className="form-label">Graduation Year</label>
+            <input
+              type="number"
+              name="education.year"
+              value={formData.education.year}
+              onChange={handleChange}
+              required
+              className="form-input"
+            />
+          </div>
 
-        <h3>Subjects</h3>
-        <div style={styles.arrayInput}>
-          <input
-            type="text"
-            value={subjectInput}
-            onChange={(e) => setSubjectInput(e.target.value)}
-            placeholder="Add a subject"
-            style={styles.input}
-          />
-          <button type="button" onClick={addSubject} style={styles.addButton}>
-            Add
+          <h3 className="text-primary mt-4 mb-2">📚 Subjects</h3>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+            <input
+              type="text"
+              value={subjectInput}
+              onChange={(e) => setSubjectInput(e.target.value)}
+              placeholder="Add a subject (e.g., Mathematics, Physics)"
+              className="form-input"
+            />
+            <button type="button" onClick={addSubject} className="btn btn-success" style={{ whiteSpace: 'nowrap' }}>
+              ➕ Add
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            {formData.subjects.map((subject, index) => (
+              <span key={index} className="badge badge-accepted" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                {subject}
+                <button type="button" onClick={() => removeSubject(subject)} style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '1.25rem', fontWeight: 'bold' }}>
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+
+          <h3 className="text-primary mt-4 mb-2">🗣️ Languages</h3>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+            <input
+              type="text"
+              value={languageInput}
+              onChange={(e) => setLanguageInput(e.target.value)}
+              placeholder="Add a language (e.g., English, Hindi)"
+              className="form-input"
+            />
+            <button type="button" onClick={addLanguage} className="btn btn-success" style={{ whiteSpace: 'nowrap' }}>
+              ➕ Add
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            {formData.languages.map((language, index) => (
+              <span key={index} className="badge badge-completed" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                {language}
+                <button type="button" onClick={() => removeLanguage(language)} style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer', fontSize: '1.25rem', fontWeight: 'bold' }}>
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+
+          <h3 className="text-primary mt-4 mb-2">📍 Location</h3>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div className="form-group" style={{ flex: 1, minWidth: '200px' }}>
+              <label className="form-label">City</label>
+              <input
+                type="text"
+                name="location.city"
+                value={formData.location.city}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Enter your city"
+              />
+            </div>
+
+            <div className="form-group" style={{ flex: 1, minWidth: '200px' }}>
+              <label className="form-label">State</label>
+              <input
+                type="text"
+                name="location.state"
+                value={formData.location.state}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Enter your state"
+              />
+            </div>
+
+            <div className="form-group" style={{ flex: 1, minWidth: '150px' }}>
+              <label className="form-label">Pincode</label>
+              <input
+                type="text"
+                name="location.pincode"
+                value={formData.location.pincode}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Pincode"
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Experience (Optional)</label>
+            <textarea
+              name="experience"
+              value={formData.experience}
+              onChange={handleChange}
+              rows="3"
+              className="form-textarea"
+              placeholder="Describe your volunteer experience or teaching background"
+            />
+          </div>
+
+          <button type="submit" disabled={saving} className="btn btn-primary btn-full">
+            {saving ? '💾 Saving...' : profile ? '✅ Update Profile' : '✨ Create Profile'}
           </button>
-        </div>
-        <div style={styles.tags}>
-          {formData.subjects.map((subject, index) => (
-            <span key={index} style={styles.tag}>
-              {subject}
-              <button type="button" onClick={() => removeSubject(subject)} style={styles.removeTag}>
-                ×
-              </button>
-            </span>
-          ))}
-        </div>
-
-        <h3>Languages</h3>
-        <div style={styles.arrayInput}>
-          <input
-            type="text"
-            value={languageInput}
-            onChange={(e) => setLanguageInput(e.target.value)}
-            placeholder="Add a language"
-            style={styles.input}
-          />
-          <button type="button" onClick={addLanguage} style={styles.addButton}>
-            Add
-          </button>
-        </div>
-        <div style={styles.tags}>
-          {formData.languages.map((language, index) => (
-            <span key={index} style={styles.tag}>
-              {language}
-              <button type="button" onClick={() => removeLanguage(language)} style={styles.removeTag}>
-                ×
-              </button>
-            </span>
-          ))}
-        </div>
-
-        <h3>Location</h3>
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>City</label>
-            <input
-              type="text"
-              name="location.city"
-              value={formData.location.city}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>State</label>
-            <input
-              type="text"
-              name="location.state"
-              value={formData.location.state}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
-          </div>
-
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Pincode</label>
-            <input
-              type="text"
-              name="location.pincode"
-              value={formData.location.pincode}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
-          </div>
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Experience (Optional)</label>
-          <textarea
-            name="experience"
-            value={formData.experience}
-            onChange={handleChange}
-            rows="3"
-            style={styles.textarea}
-          />
-        </div>
-
-        <button type="submit" disabled={saving} style={styles.button}>
-          {saving ? 'Saving...' : profile ? 'Update Profile' : 'Create Profile'}
-        </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    maxWidth: '800px',
-    margin: '0 auto',
-    padding: '2rem'
-  },
-  title: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-    color: '#2c3e50'
-  },
-  form: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-  },
-  formGroup: {
-    marginBottom: '1.5rem',
-    flex: 1
-  },
-  row: {
-    display: 'flex',
-    gap: '1rem'
-  },
-  label: {
-    display: 'block',
-    marginBottom: '0.5rem',
-    color: '#34495e',
-    fontWeight: '500'
-  },
-  input: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    boxSizing: 'border-box'
-  },
-  textarea: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    boxSizing: 'border-box',
-    resize: 'vertical'
-  },
-  arrayInput: {
-    display: 'flex',
-    gap: '0.5rem',
-    marginBottom: '1rem'
-  },
-  addButton: {
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#27ae60',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer'
-  },
-  tags: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '0.5rem',
-    marginBottom: '1.5rem'
-  },
-  tag: {
-    backgroundColor: '#3498db',
-    color: '#fff',
-    padding: '0.5rem 1rem',
-    borderRadius: '4px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem'
-  },
-  removeTag: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    color: '#fff',
-    cursor: 'pointer',
-    fontSize: '1.25rem',
-    fontWeight: 'bold'
-  },
-  button: {
-    width: '100%',
-    padding: '0.75rem',
-    backgroundColor: '#3498db',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    cursor: 'pointer'
-  },
-  success: {
-    backgroundColor: '#27ae60',
-    color: '#fff',
-    padding: '1rem',
-    borderRadius: '4px',
-    marginBottom: '1rem'
-  },
-  error: {
-    backgroundColor: '#e74c3c',
-    color: '#fff',
-    padding: '1rem',
-    borderRadius: '4px',
-    marginBottom: '1rem'
-  },
-  loading: {
-    textAlign: 'center',
-    padding: '2rem'
-  }
 };
 
 export default VolunteerProfile;

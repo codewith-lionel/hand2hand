@@ -3,17 +3,24 @@ import { studentAPI } from '../../services/api';
 
 const ViewVolunteers = () => {
   const [volunteers, setVolunteers] = useState([]);
+  const [filteredVolunteers, setFilteredVolunteers] = useState([]);
   const [filters, setFilters] = useState({ city: '', state: '', subject: '' });
+  const [sortBy, setSortBy] = useState('completedExams');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchVolunteers();
   }, []);
 
+  useEffect(() => {
+    applyFiltersAndSort();
+  }, [volunteers, sortBy]);
+
   const fetchVolunteers = async () => {
     try {
-      const response = await studentAPI.getVolunteers(filters);
+      const response = await studentAPI.getVolunteers({});
       setVolunteers(response.data.data);
+      setFilteredVolunteers(response.data.data);
     } catch (error) {
       console.error('Error fetching volunteers:', error);
     } finally {
@@ -25,127 +32,148 @@ const ViewVolunteers = () => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
-  const handleSearch = () => {
+  const applyFiltersAndSort = () => {
+    let filtered = [...volunteers];
+    
+    // Apply sorting
+    filtered.sort((a, b) => {
+      if (sortBy === 'completedExams') {
+        return b.completedExams - a.completedExams;
+      } else if (sortBy === 'name') {
+        return a.userId.name.localeCompare(b.userId.name);
+      }
+      return 0;
+    });
+    
+    setFilteredVolunteers(filtered);
+  };
+
+  const handleSearch = async () => {
     setLoading(true);
+    try {
+      const response = await studentAPI.getVolunteers(filters);
+      setVolunteers(response.data.data);
+      setFilteredVolunteers(response.data.data);
+    } catch (error) {
+      console.error('Error fetching volunteers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ city: '', state: '', subject: '' });
     fetchVolunteers();
   };
 
   if (loading) {
-    return <div style={styles.loading}>Loading...</div>;
+    return <div className="loading">🔄 Loading volunteers...</div>;
   }
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Find Volunteers</h2>
-      
-      <div style={styles.filters}>
-        <input
-          type="text"
-          name="city"
-          placeholder="City"
-          value={filters.city}
-          onChange={handleFilterChange}
-          style={styles.input}
-        />
-        <input
-          type="text"
-          name="state"
-          placeholder="State"
-          value={filters.state}
-          onChange={handleFilterChange}
-          style={styles.input}
-        />
-        <input
-          type="text"
-          name="subject"
-          placeholder="Subject"
-          value={filters.subject}
-          onChange={handleFilterChange}
-          style={styles.input}
-        />
-        <button onClick={handleSearch} style={styles.button}>
-          Search
-        </button>
-      </div>
-
-      <div style={styles.volunteerList}>
-        {volunteers.length === 0 ? (
-          <p>No volunteers found. Try adjusting your filters.</p>
-        ) : (
-          volunteers.map((volunteer) => (
-            <div key={volunteer._id} style={styles.volunteerCard}>
-              <h3>{volunteer.userId.name}</h3>
-              <p><strong>Email:</strong> {volunteer.userId.email}</p>
-              <p><strong>Phone:</strong> {volunteer.userId.phone}</p>
-              <p><strong>Location:</strong> {volunteer.location.city}, {volunteer.location.state}</p>
-              <p><strong>Subjects:</strong> {volunteer.subjects.join(', ')}</p>
-              <p><strong>Languages:</strong> {volunteer.languages.join(', ')}</p>
-              <p><strong>Education:</strong> {volunteer.education.degree} from {volunteer.education.institution}</p>
-              <p><strong>Completed Exams:</strong> {volunteer.completedExams}</p>
-              {volunteer.isVerified && <span style={styles.verified}>✓ Verified</span>}
+    <div className="page-container">
+      <div className="content-wrapper fade-in">
+        <h2 className="text-primary mb-4">🔍 Find Volunteers</h2>
+        
+        <div style={{ background: 'rgba(255, 255, 255, 0.95)', padding: '1.5rem', borderRadius: 'var(--radius-lg)', marginBottom: '2rem', boxShadow: 'var(--shadow-md)' }}>
+          <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+            <input
+              type="text"
+              name="city"
+              placeholder="🏙️ City"
+              value={filters.city}
+              onChange={handleFilterChange}
+              className="form-input"
+              style={{ flex: 1, minWidth: '200px' }}
+            />
+            <input
+              type="text"
+              name="state"
+              placeholder="🗺️ State"
+              value={filters.state}
+              onChange={handleFilterChange}
+              className="form-input"
+              style={{ flex: 1, minWidth: '200px' }}
+            />
+            <input
+              type="text"
+              name="subject"
+              placeholder="📚 Subject"
+              value={filters.subject}
+              onChange={handleFilterChange}
+              className="form-input"
+              style={{ flex: 1, minWidth: '200px' }}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+            <button onClick={handleSearch} className="btn btn-primary">
+              🔎 Search
+            </button>
+            <button onClick={handleClearFilters} className="btn btn-outline">
+              ↺ Clear Filters
+            </button>
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <label style={{ fontWeight: '600', color: 'var(--text-primary)' }}>Sort by:</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="form-select"
+                style={{ width: 'auto' }}
+              >
+                <option value="completedExams">Most Experienced</option>
+                <option value="name">Name (A-Z)</option>
+              </select>
             </div>
-          ))
-        )}
+          </div>
+        </div>
+
+        <p className="text-secondary" style={{ marginBottom: '1rem' }}>
+          Found {filteredVolunteers.length} verified volunteer{filteredVolunteers.length !== 1 ? 's' : ''}
+        </p>
+
+        <div className="card-grid">
+          {filteredVolunteers.length === 0 ? (
+            <div className="card text-center" style={{ gridColumn: '1 / -1' }}>
+              <p className="text-secondary">📭 No volunteers found. Try adjusting your filters.</p>
+            </div>
+          ) : (
+            filteredVolunteers.map((volunteer) => (
+              <div key={volunteer._id} className="card" style={{ position: 'relative' }}>
+                {volunteer.completedExams >= 10 && (
+                  <span style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    right: '1rem',
+                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    color: 'white',
+                    padding: '0.25rem 0.75rem',
+                    borderRadius: 'var(--radius-md)',
+                    fontSize: '0.75rem',
+                    fontWeight: '700',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}>
+                    ⭐ Top Volunteer
+                  </span>
+                )}
+                <h3 className="text-primary">👤 {volunteer.userId.name}</h3>
+                <p><strong>📧 Email:</strong> {volunteer.userId.email}</p>
+                <p><strong>📞 Phone:</strong> {volunteer.userId.phone}</p>
+                <p><strong>📍 Location:</strong> {volunteer.location.city}, {volunteer.location.state}</p>
+                <p><strong>📚 Subjects:</strong> {volunteer.subjects.join(', ')}</p>
+                <p><strong>🗣️ Languages:</strong> {volunteer.languages.join(', ')}</p>
+                <p><strong>🎓 Education:</strong> {volunteer.education.degree} from {volunteer.education.institution}</p>
+                <p><strong>✅ Completed Exams:</strong> <span className="badge badge-success">{volunteer.completedExams}</span></p>
+                {volunteer.experience && (
+                  <p><strong>💼 Experience:</strong> {volunteer.experience}</p>
+                )}
+                {volunteer.isVerified && <span className="badge badge-verified">✓ Verified</span>}
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '2rem'
-  },
-  title: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-    color: '#2c3e50'
-  },
-  filters: {
-    display: 'flex',
-    gap: '1rem',
-    marginBottom: '2rem',
-    flexWrap: 'wrap'
-  },
-  input: {
-    flex: 1,
-    minWidth: '200px',
-    padding: '0.75rem',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem'
-  },
-  button: {
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#3498db',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer'
-  },
-  volunteerList: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-    gap: '1.5rem'
-  },
-  volunteerCard: {
-    backgroundColor: '#fff',
-    padding: '1.5rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-  },
-  verified: {
-    backgroundColor: '#27ae60',
-    color: '#fff',
-    padding: '0.25rem 0.5rem',
-    borderRadius: '4px',
-    fontSize: '0.875rem'
-  },
-  loading: {
-    textAlign: 'center',
-    padding: '2rem'
-  }
 };
 
 export default ViewVolunteers;

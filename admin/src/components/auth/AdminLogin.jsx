@@ -30,99 +30,43 @@ const AdminLogin = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.form}>
-        <h2 style={styles.title}>Admin Login</h2>
-        {error && <div style={styles.error}>{error}</div>}
+    <div className="admin-form-container">
+      <div className="admin-form-card admin-fade-in">
+        <h2 className="admin-form-title">🛡️ Admin Portal</h2>
+        <p className="admin-text-center admin-text-secondary admin-mb-3">Login to manage the platform</p>
+        {error && <div className="admin-alert admin-alert-error">{error}</div>}
         <form onSubmit={handleSubmit}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Email</label>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Email Address</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
-              style={styles.input}
+              className="admin-form-input"
+              placeholder="Enter your admin email"
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Password</label>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Password</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
-              style={styles.input}
+              className="admin-form-input"
+              placeholder="Enter your password"
             />
           </div>
-          <button type="submit" disabled={loading} style={styles.button}>
-            {loading ? 'Logging in...' : 'Login'}
+          <button type="submit" disabled={loading} className="admin-btn admin-btn-primary admin-btn-full">
+            {loading ? '🔄 Logging in...' : '🔐 Login as Admin'}
           </button>
         </form>
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-    padding: '2rem',
-    backgroundColor: '#ecf0f1'
-  },
-  form: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-    width: '100%',
-    maxWidth: '400px'
-  },
-  title: {
-    marginBottom: '1.5rem',
-    textAlign: 'center',
-    color: '#2c3e50'
-  },
-  formGroup: {
-    marginBottom: '1rem'
-  },
-  label: {
-    display: 'block',
-    marginBottom: '0.5rem',
-    color: '#34495e',
-    fontWeight: '500'
-  },
-  input: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    boxSizing: 'border-box'
-  },
-  button: {
-    width: '100%',
-    padding: '0.75rem',
-    backgroundColor: '#34495e',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    cursor: 'pointer',
-    marginTop: '1rem'
-  },
-  error: {
-    backgroundColor: '#e74c3c',
-    color: '#fff',
-    padding: '0.75rem',
-    borderRadius: '4px',
-    marginBottom: '1rem'
-  }
 };
 
 export default AdminLogin;

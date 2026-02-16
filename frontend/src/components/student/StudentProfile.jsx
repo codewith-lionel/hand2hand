@@ -82,209 +82,139 @@ const StudentProfile = () => {
   };
 
   if (loading) {
-    return <div style={styles.loading}>Loading...</div>;
+    return <div className="loading">🔄 Loading profile...</div>;
   }
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>{profile ? 'Update' : 'Create'} Student Profile</h2>
-      {message && (
-        <div style={message.includes('Error') ? styles.error : styles.success}>
-          {message}
-        </div>
-      )}
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Disability Type</label>
-          <select
-            name="disabilityType"
-            value={formData.disabilityType}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          >
-            <option value="visual">Visual</option>
-            <option value="hearing">Hearing</option>
-            <option value="mobility">Mobility</option>
-            <option value="learning">Learning</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Disability Details</label>
-          <textarea
-            name="disabilityDetails"
-            value={formData.disabilityDetails}
-            onChange={handleChange}
-            required
-            rows="3"
-            style={styles.textarea}
-          />
-        </div>
-
-        <div style={styles.row}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>City</label>
-            <input
-              type="text"
-              name="location.city"
-              value={formData.location.city}
+    <div className="page-container">
+      <div className="content-wrapper fade-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <h2 className="form-title">{profile ? '✏️ Update' : '✨ Create'} Student Profile</h2>
+        {message && (
+          <div className={message.includes('Error') ? 'alert alert-error' : 'alert alert-success'}>
+            {message}
+          </div>
+        )}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">Disability Type</label>
+            <select
+              name="disabilityType"
+              value={formData.disabilityType}
               onChange={handleChange}
               required
-              style={styles.input}
+              className="form-select"
+            >
+              <option value="visual">👁️ Visual</option>
+              <option value="hearing">👂 Hearing</option>
+              <option value="mobility">🦽 Mobility</option>
+              <option value="learning">📚 Learning</option>
+              <option value="other">➕ Other</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Disability Details</label>
+            <textarea
+              name="disabilityDetails"
+              value={formData.disabilityDetails}
+              onChange={handleChange}
+              required
+              rows="3"
+              className="form-textarea"
+              placeholder="Please provide details about your disability"
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>State</label>
-            <input
-              type="text"
-              name="location.state"
-              value={formData.location.state}
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <div className="form-group" style={{ flex: 1, minWidth: '200px' }}>
+              <label className="form-label">City</label>
+              <input
+                type="text"
+                name="location.city"
+                value={formData.location.city}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Enter your city"
+              />
+            </div>
+
+            <div className="form-group" style={{ flex: 1, minWidth: '200px' }}>
+              <label className="form-label">State</label>
+              <input
+                type="text"
+                name="location.state"
+                value={formData.location.state}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Enter your state"
+              />
+            </div>
+
+            <div className="form-group" style={{ flex: 1, minWidth: '150px' }}>
+              <label className="form-label">Pincode</label>
+              <input
+                type="text"
+                name="location.pincode"
+                value={formData.location.pincode}
+                onChange={handleChange}
+                required
+                className="form-input"
+                placeholder="Pincode"
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Education Level</label>
+            <select
+              name="educationLevel"
+              value={formData.educationLevel}
               onChange={handleChange}
               required
-              style={styles.input}
+              className="form-select"
+            >
+              <option value="high_school">🎓 High School</option>
+              <option value="undergraduate">📚 Undergraduate</option>
+              <option value="postgraduate">🎯 Postgraduate</option>
+              <option value="doctorate">🏆 Doctorate</option>
+              <option value="other">➕ Other</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Institution</label>
+            <input
+              type="text"
+              name="institution"
+              value={formData.institution}
+              onChange={handleChange}
+              required
+              className="form-input"
+              placeholder="Enter your institution name"
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Pincode</label>
+          <div className="form-group">
+            <label className="form-label">Roll Number (Optional)</label>
             <input
               type="text"
-              name="location.pincode"
-              value={formData.location.pincode}
+              name="rollNumber"
+              value={formData.rollNumber}
               onChange={handleChange}
-              required
-              style={styles.input}
+              className="form-input"
+              placeholder="Enter your roll number"
             />
           </div>
-        </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Education Level</label>
-          <select
-            name="educationLevel"
-            value={formData.educationLevel}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          >
-            <option value="high_school">High School</option>
-            <option value="undergraduate">Undergraduate</option>
-            <option value="postgraduate">Postgraduate</option>
-            <option value="doctorate">Doctorate</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Institution</label>
-          <input
-            type="text"
-            name="institution"
-            value={formData.institution}
-            onChange={handleChange}
-            required
-            style={styles.input}
-          />
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.label}>Roll Number (Optional)</label>
-          <input
-            type="text"
-            name="rollNumber"
-            value={formData.rollNumber}
-            onChange={handleChange}
-            style={styles.input}
-          />
-        </div>
-
-        <button type="submit" disabled={saving} style={styles.button}>
-          {saving ? 'Saving...' : profile ? 'Update Profile' : 'Create Profile'}
-        </button>
-      </form>
+          <button type="submit" disabled={saving} className="btn btn-primary btn-full">
+            {saving ? '💾 Saving...' : profile ? '✅ Update Profile' : '✨ Create Profile'}
+          </button>
+        </form>
+      </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    maxWidth: '800px',
-    margin: '0 auto',
-    padding: '2rem'
-  },
-  title: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-    color: '#2c3e50'
-  },
-  form: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-  },
-  formGroup: {
-    marginBottom: '1.5rem',
-    flex: 1
-  },
-  row: {
-    display: 'flex',
-    gap: '1rem'
-  },
-  label: {
-    display: 'block',
-    marginBottom: '0.5rem',
-    color: '#34495e',
-    fontWeight: '500'
-  },
-  input: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    boxSizing: 'border-box'
-  },
-  textarea: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    boxSizing: 'border-box',
-    resize: 'vertical'
-  },
-  button: {
-    width: '100%',
-    padding: '0.75rem',
-    backgroundColor: '#3498db',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    cursor: 'pointer'
-  },
-  success: {
-    backgroundColor: '#27ae60',
-    color: '#fff',
-    padding: '1rem',
-    borderRadius: '4px',
-    marginBottom: '1rem'
-  },
-  error: {
-    backgroundColor: '#e74c3c',
-    color: '#fff',
-    padding: '1rem',
-    borderRadius: '4px',
-    marginBottom: '1rem'
-  },
-  loading: {
-    textAlign: 'center',
-    padding: '2rem'
-  }
 };
 
 export default StudentProfile;

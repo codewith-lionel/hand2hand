@@ -25,7 +25,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div style={styles.loading}>Loading...</div>;
+    return <div className="admin-loading">🔄 Loading statistics...</div>;
   }
 
   const chartData = {
@@ -41,20 +41,20 @@ const Dashboard = () => {
           stats?.requests.cancelled || 0
         ],
         backgroundColor: [
-          'rgba(243, 156, 18, 0.6)',
-          'rgba(39, 174, 96, 0.6)',
-          'rgba(52, 152, 219, 0.6)',
-          'rgba(231, 76, 60, 0.6)',
-          'rgba(149, 165, 166, 0.6)'
+          'rgba(245, 158, 11, 0.8)',
+          'rgba(16, 185, 129, 0.8)',
+          'rgba(59, 130, 246, 0.8)',
+          'rgba(239, 68, 68, 0.8)',
+          'rgba(148, 163, 184, 0.8)'
         ],
         borderColor: [
-          'rgba(243, 156, 18, 1)',
-          'rgba(39, 174, 96, 1)',
-          'rgba(52, 152, 219, 1)',
-          'rgba(231, 76, 60, 1)',
-          'rgba(149, 165, 166, 1)'
+          'rgba(245, 158, 11, 1)',
+          'rgba(16, 185, 129, 1)',
+          'rgba(59, 130, 246, 1)',
+          'rgba(239, 68, 68, 1)',
+          'rgba(148, 163, 184, 1)'
         ],
-        borderWidth: 1
+        borderWidth: 2
       }
     ]
   };
@@ -63,87 +63,71 @@ const Dashboard = () => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top'
+        position: 'top',
+        labels: {
+          font: {
+            size: 14,
+            weight: 'bold'
+          }
+        }
       },
       title: {
         display: true,
-        text: 'Request Status Distribution'
+        text: '📊 Request Status Distribution',
+        font: {
+          size: 18,
+          weight: 'bold'
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          precision: 0
+        }
       }
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Admin Dashboard</h2>
+    <div className="admin-container">
+      <div className="admin-content-wrapper admin-fade-in">
+        <h2 className="admin-text-primary admin-mb-4">📊 Admin Dashboard</h2>
 
-      <div style={styles.statsGrid}>
-        <div style={styles.statCard}>
-          <h3>{stats?.users.total || 0}</h3>
-          <p>Total Users</p>
+        <div className="admin-stats-grid">
+          <div className="admin-stat-card">
+            <h3>{stats?.users.total || 0}</h3>
+            <p>👥 Total Users</p>
+          </div>
+          <div className="admin-stat-card secondary">
+            <h3>{stats?.users.students || 0}</h3>
+            <p>🎓 Students</p>
+          </div>
+          <div className="admin-stat-card accent">
+            <h3>{stats?.users.volunteers || 0}</h3>
+            <p>🤝 Volunteers</p>
+          </div>
+          <div className="admin-stat-card success">
+            <h3>{stats?.users.verifiedVolunteers || 0}</h3>
+            <p>✅ Verified Volunteers</p>
+          </div>
+          <div className="admin-stat-card info">
+            <h3>{stats?.requests.total || 0}</h3>
+            <p>📝 Total Requests</p>
+          </div>
+          <div className="admin-stat-card warning">
+            <h3>{stats?.requests.completed || 0}</h3>
+            <p>🎯 Completed Exams</p>
+          </div>
         </div>
-        <div style={styles.statCard}>
-          <h3>{stats?.users.students || 0}</h3>
-          <p>Students</p>
-        </div>
-        <div style={styles.statCard}>
-          <h3>{stats?.users.volunteers || 0}</h3>
-          <p>Volunteers</p>
-        </div>
-        <div style={styles.statCard}>
-          <h3>{stats?.users.verifiedVolunteers || 0}</h3>
-          <p>Verified Volunteers</p>
-        </div>
-        <div style={styles.statCard}>
-          <h3>{stats?.requests.total || 0}</h3>
-          <p>Total Requests</p>
-        </div>
-        <div style={styles.statCard}>
-          <h3>{stats?.requests.completed || 0}</h3>
-          <p>Completed Exams</p>
-        </div>
-      </div>
 
-      <div style={styles.chartContainer}>
-        <Bar data={chartData} options={chartOptions} />
+        <div className="admin-chart-container">
+          <Bar data={chartData} options={chartOptions} />
+        </div>
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '2rem'
-  },
-  title: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-    color: '#2c3e50'
-  },
-  statsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '1.5rem',
-    marginBottom: '3rem'
-  },
-  statCard: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-    textAlign: 'center'
-  },
-  chartContainer: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-  },
-  loading: {
-    textAlign: 'center',
-    padding: '2rem'
-  }
 };
 
 export default Dashboard;

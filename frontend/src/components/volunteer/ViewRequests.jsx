@@ -35,71 +35,75 @@ const ViewRequests = () => {
   };
 
   if (loading) {
-    return <div style={styles.loading}>Loading...</div>;
+    return <div className="loading">🔄 Loading requests...</div>;
   }
 
   const pendingRequests = requests.filter(r => r.status === 'pending');
   const myRequests = requests.filter(r => r.status !== 'pending');
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Exam Requests</h2>
+    <div className="page-container">
+      <div className="content-wrapper fade-in">
+        <h2 className="text-primary mb-4">📋 Exam Requests</h2>
 
-      <div style={styles.section}>
-        <h3>Pending Requests</h3>
+        <h3 className="mt-4 mb-2">⏳ Pending Requests</h3>
         {pendingRequests.length === 0 ? (
-          <p>No pending requests at the moment.</p>
+          <div className="card text-center">
+            <p className="text-secondary">📭 No pending requests at the moment.</p>
+          </div>
         ) : (
-          <div style={styles.requestList}>
+          <div className="card-grid">
             {pendingRequests.map((request) => (
-              <div key={request._id} style={styles.requestCard}>
-                <h4>{request.examDetails.subject}</h4>
-                <p><strong>Student:</strong> {request.studentId.userId.name}</p>
-                <p><strong>Date:</strong> {new Date(request.examDetails.date).toLocaleDateString()}</p>
-                <p><strong>Time:</strong> {request.examDetails.time}</p>
-                <p><strong>Duration:</strong> {request.examDetails.duration}</p>
-                <p><strong>Type:</strong> {request.examDetails.type}</p>
-                <p><strong>Venue:</strong> {request.examDetails.venue}</p>
+              <div key={request._id} className="request-card">
+                <h4>📖 {request.examDetails.subject}</h4>
+                <p><strong>👤 Student:</strong> {request.studentId.userId.name}</p>
+                <p><strong>📅 Date:</strong> {new Date(request.examDetails.date).toLocaleDateString()}</p>
+                <p><strong>🕐 Time:</strong> {request.examDetails.time}</p>
+                <p><strong>⏱️ Duration:</strong> {request.examDetails.duration}</p>
+                <p><strong>📝 Type:</strong> {request.examDetails.type}</p>
+                <p><strong>📍 Venue:</strong> {request.examDetails.venue}</p>
                 {request.requiredQualification && (
-                  <p><strong>Required Qualification:</strong> {request.requiredQualification}</p>
+                  <p><strong>🎓 Required Qualification:</strong> {request.requiredQualification}</p>
                 )}
                 {request.specialRequirements && (
-                  <p><strong>Special Requirements:</strong> {request.specialRequirements}</p>
+                  <p><strong>⚠️ Special Requirements:</strong> {request.specialRequirements}</p>
                 )}
-                <div style={styles.actions}>
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
                   <button
                     onClick={() => handleRespond(request._id, 'accepted')}
                     disabled={respondingTo === request._id}
-                    style={styles.acceptButton}
+                    className="btn btn-success"
+                    style={{ flex: 1 }}
                   >
-                    Accept
+                    {respondingTo === request._id ? '⏳' : '✅'} Accept
                   </button>
                   <button
                     onClick={() => handleRespond(request._id, 'rejected')}
                     disabled={respondingTo === request._id}
-                    style={styles.rejectButton}
+                    className="btn btn-danger"
+                    style={{ flex: 1 }}
                   >
-                    Reject
+                    {respondingTo === request._id ? '⏳' : '❌'} Reject
                   </button>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </div>
 
-      <div style={styles.section}>
-        <h3>My Responses</h3>
+        <h3 className="mt-4 mb-2">📝 My Responses</h3>
         {myRequests.length === 0 ? (
-          <p>No responses yet.</p>
+          <div className="card text-center">
+            <p className="text-secondary">📭 No responses yet.</p>
+          </div>
         ) : (
-          <div style={styles.requestList}>
+          <div className="card-grid">
             {myRequests.map((request) => (
-              <div key={request._id} style={styles.requestCard}>
-                <h4>{request.examDetails.subject}</h4>
-                <p><strong>Student:</strong> {request.studentId.userId.name}</p>
-                <p><strong>Date:</strong> {new Date(request.examDetails.date).toLocaleDateString()}</p>
-                <p><strong>Status:</strong> <span style={getStatusStyle(request.status)}>{request.status}</span></p>
+              <div key={request._id} className="request-card">
+                <h4>📖 {request.examDetails.subject}</h4>
+                <p><strong>👤 Student:</strong> {request.studentId.userId.name}</p>
+                <p><strong>📅 Date:</strong> {new Date(request.examDetails.date).toLocaleDateString()}</p>
+                <p><strong>Status:</strong> <span className={`badge badge-${request.status}`}>{request.status}</span></p>
               </div>
             ))}
           </div>
@@ -107,73 +111,6 @@ const ViewRequests = () => {
       </div>
     </div>
   );
-};
-
-const getStatusStyle = (status) => {
-  const baseStyle = { padding: '0.25rem 0.5rem', borderRadius: '4px', fontWeight: 'bold' };
-  switch (status) {
-    case 'accepted':
-      return { ...baseStyle, backgroundColor: '#27ae60', color: '#fff' };
-    case 'rejected':
-      return { ...baseStyle, backgroundColor: '#e74c3c', color: '#fff' };
-    default:
-      return baseStyle;
-  }
-};
-
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '2rem'
-  },
-  title: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-    color: '#2c3e50'
-  },
-  section: {
-    marginBottom: '3rem'
-  },
-  requestList: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-    gap: '1.5rem',
-    marginTop: '1rem'
-  },
-  requestCard: {
-    backgroundColor: '#fff',
-    padding: '1.5rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-  },
-  actions: {
-    display: 'flex',
-    gap: '0.5rem',
-    marginTop: '1rem'
-  },
-  acceptButton: {
-    flex: 1,
-    padding: '0.75rem',
-    backgroundColor: '#27ae60',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer'
-  },
-  rejectButton: {
-    flex: 1,
-    padding: '0.75rem',
-    backgroundColor: '#e74c3c',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer'
-  },
-  loading: {
-    textAlign: 'center',
-    padding: '2rem'
-  }
 };
 
 export default ViewRequests;

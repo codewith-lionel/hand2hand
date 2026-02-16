@@ -36,7 +36,8 @@ export const studentAPI = {
   getProfile: () => api.get('/students/profile'),
   updateProfile: (data) => api.put('/students/profile', data),
   getVolunteers: (params) => api.get('/students/volunteers', { params }),
-  createRequest: (data) => api.post('/students/requests', data)
+  createRequest: (data) => api.post('/students/requests', data),
+  getRequests: () => api.get('/students/requests')
 };
 
 // Volunteer API
@@ -46,7 +47,8 @@ export const volunteerAPI = {
   updateProfile: (data) => api.put('/volunteers/profile', data),
   getRequests: () => api.get('/volunteers/requests'),
   respondToRequest: (id, data) => api.put(`/volunteers/requests/${id}/respond`, data),
-  getAssignedExams: () => api.get('/volunteers/assigned-exams')
+  getAssignedExams: () => api.get('/volunteers/assigned-exams'),
+  completeExam: (id) => api.put(`/volunteers/exams/${id}/complete`)
 };
 
 // Request API

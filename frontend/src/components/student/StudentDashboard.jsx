@@ -1,59 +1,162 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { requestAPI } from '../../services/api';
+import { studentAPI, requestAPI } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 const StudentDashboard = () => {
   const [requests, setRequests] = useState([]);
+  const [profile, setProfile] = useState(null);
+  const [stats, setStats] = useState({ total: 0, pending: 0, accepted: 0, completed: 0 });
   const [loading, setLoading] = useState(true);
+  const [cancelling, setCancelling] = useState(null);
+  const [message, setMessage] = useState('');
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchRequests();
+    fetchDashboardData();
   }, []);
 
-  const fetchRequests = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const response = await requestAPI.getRequests();
-      setRequests(response.data.data);
+      const [requestsRes, profileRes] = await Promise.all([
+        studentAPI.getRequests(),
+        studentAPI.getProfile().catch(() => null)
+      ]);
+      
+      console.log('Requests response:', requestsRes.data);
+      const requestsData = requestsRes.data.data;
+      console.log('Requests data:', requestsData);
+      setRequests(requestsData);
+      setProfile(profileRes?.data?.data || null);
+      
+      // Calculate stats
+      const stats = {
+        total: requestsData.length,
+        pending: requestsData.filter(r => r.status === 'pending').length,
+        accepted: requestsData.filter(r => r.status === 'accepted').length,
+        completed: requestsData.filter(r => r.status === 'completed').length
+      };
+      setStats(stats);
     } catch (error) {
-      console.error('Error fetching requests:', error);
+      console.error('Error fetching dashboard data:', error);
+      setMessage('❌ Error loading dashboard data: ' + (error.response?.data?.message || error.message));
     } finally {
       setLoading(false);
     }
   };
 
+  const handleCancelRequest = async (requestId) => {
+    if (!window.confirm('Are you sure you want to cancel this request?')) {
+      return;
+    }
+    
+    setCancelling(requestId);
+    try {
+      await requestAPI.cancelRequest(requestId);
+      setMessage('✅ Request cancelled successfully!');
+      fetchDashboardData();
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      setMessage('❌ ' + (error.response?.data?.message || 'Error cancelling request'));
+      setTimeout(() => setMessage(''), 3000);
+    } finally {
+      setCancelling(null);
+    }
+  };
+
   if (loading) {
-    return <div style={styles.loading}>Loading...</div>;
+    return <div className="loading">🔄 Loading your dashboard...</div>;
   }
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Student Dashboard</h2>
-      <div style={styles.actions}>
-        <Link to="/student/volunteers" style={styles.actionButton}>
-          Find Volunteers
-        </Link>
-        <Link to="/student/create-request" style={styles.actionButton}>
-          Create New Request
-        </Link>
-        <Link to="/student/profile" style={styles.actionButton}>
-          My Profile
-        </Link>
-      </div>
-      
-      <div style={styles.section}>
-        <h3>Recent Requests</h3>
+    <div className="page-container">
+      <div className="content-wrapper fade-in">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <h2 className="text-primary" style={{ marginBottom: '0.25rem' }}>📚 Welcome, {user?.name}!</h2>
+            <p className="text-secondary">Student Dashboard</p>
+          </div>
+          {!profile && (
+            <div style={{
+              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+              color: 'white',
+              padding: '0.75rem 1.5rem',
+              borderRadius: 'var(--radius-lg)',
+              boxShadow: 'var(--shadow-md)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}>
+              <span>⚠️</span>
+              <span style={{ fontWeight: '600' }}>Complete your profile to create requests</span>
+            </div>
+          )}
+        </div>
+        
+        {message && (
+          <div className={message.includes('❌') ? 'alert alert-error' : 'alert alert-success'}>
+            {message}
+          </div>
+        )}
+        
+        <div className="card-grid" style={{ marginBottom: '2rem' }}>
+          <div className="stat-card">
+            <h3>{stats.total}</h3>
+            <p>📝 Total Requests</p>
+          </div>
+          <div className="stat-card secondary">
+            <h3>{stats.pending}</h3>
+            <p>⏳ Pending</p>
+          </div>
+          <div className="stat-card accent">
+            <h3>{stats.accepted}</h3>
+            <p>✅ Accepted</p>
+          </div>
+          <div className="stat-card success">
+            <h3>{stats.completed}</h3>
+            <p>🎯 Completed</p>
+          </div>
+        </div>
+        
+        <div className="btn-group">
+          <Link to="/student/volunteers" className="btn btn-primary">
+            🔍 Find Volunteers
+          </Link>
+          <Link to="/student/create-request" className="btn btn-secondary">
+            ➕ Create New Request
+          </Link>
+          <Link to="/student/profile" className="btn btn-outline">
+            👤 {profile ? 'Update Profile' : 'Complete Profile'}
+          </Link>
+        </div>
+        
+        <h3 className="mt-4 mb-2">📋 Recent Requests</h3>
         {requests.length === 0 ? (
-          <p>No requests yet. Start by finding volunteers and creating a request.</p>
+          <div className="card text-center">
+            <p className="text-secondary">📭 No requests yet. Start by {profile ? 'finding volunteers and creating a request' : 'completing your profile'}.</p>
+          </div>
         ) : (
-          <div style={styles.requestList}>
-            {requests.slice(0, 5).map((request) => (
-              <div key={request._id} style={styles.requestCard}>
-                <h4>{request.examDetails.subject}</h4>
-                <p><strong>Date:</strong> {new Date(request.examDetails.date).toLocaleDateString()}</p>
-                <p><strong>Time:</strong> {request.examDetails.time}</p>
-                <p><strong>Status:</strong> <span style={getStatusStyle(request.status)}>{request.status}</span></p>
+          <div className="card-grid">
+            {requests.slice(0, 6).map((request) => (
+              <div key={request._id} className="request-card">
+                <h4>📖 {request.examDetails.subject}</h4>
+                <p><strong>📅 Date:</strong> {new Date(request.examDetails.date).toLocaleDateString()}</p>
+                <p><strong>🕐 Time:</strong> {request.examDetails.time}</p>
+                <p><strong>⏱️ Duration:</strong> {request.examDetails.duration}</p>
+                <p><strong>📍 Venue:</strong> {request.examDetails.venue}</p>
+                <p><strong>Status:</strong> <span className={`badge badge-${request.status}`}>{request.status}</span></p>
                 {request.volunteerId && (
-                  <p><strong>Volunteer:</strong> {request.volunteerId.userId.name}</p>
+                  <p><strong>👤 Volunteer:</strong> {request.volunteerId.userId.name}</p>
+                )}
+                {(request.status === 'pending' || request.status === 'accepted') && (
+                  <button
+                    onClick={() => handleCancelRequest(request._id)}
+                    disabled={cancelling === request._id}
+                    className="btn btn-danger"
+                    style={{ marginTop: '0.5rem', width: '100%' }}
+                  >
+                    {cancelling === request._id ? '⏳ Cancelling...' : '🚫 Cancel Request'}
+                  </button>
                 )}
               </div>
             ))}
@@ -62,71 +165,6 @@ const StudentDashboard = () => {
       </div>
     </div>
   );
-};
-
-const getStatusStyle = (status) => {
-  const baseStyle = { padding: '0.25rem 0.5rem', borderRadius: '4px', fontWeight: 'bold' };
-  switch (status) {
-    case 'pending':
-      return { ...baseStyle, backgroundColor: '#f39c12', color: '#fff' };
-    case 'accepted':
-      return { ...baseStyle, backgroundColor: '#27ae60', color: '#fff' };
-    case 'rejected':
-      return { ...baseStyle, backgroundColor: '#e74c3c', color: '#fff' };
-    case 'completed':
-      return { ...baseStyle, backgroundColor: '#3498db', color: '#fff' };
-    default:
-      return baseStyle;
-  }
-};
-
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '2rem'
-  },
-  title: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-    color: '#2c3e50'
-  },
-  actions: {
-    display: 'flex',
-    gap: '1rem',
-    marginBottom: '2rem',
-    flexWrap: 'wrap'
-  },
-  actionButton: {
-    backgroundColor: '#3498db',
-    color: '#fff',
-    padding: '0.75rem 1.5rem',
-    borderRadius: '4px',
-    textDecoration: 'none',
-    display: 'inline-block'
-  },
-  section: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-    marginBottom: '2rem'
-  },
-  requestList: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-    gap: '1rem',
-    marginTop: '1rem'
-  },
-  requestCard: {
-    border: '1px solid #ddd',
-    padding: '1rem',
-    borderRadius: '4px'
-  },
-  loading: {
-    textAlign: 'center',
-    padding: '2rem'
-  }
 };
 
 export default StudentDashboard;

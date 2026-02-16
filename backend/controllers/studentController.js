@@ -130,23 +130,66 @@ exports.getVolunteers = async (req, res) => {
 // @access  Private (Student)
 exports.createRequest = async (req, res) => {
   try {
+    console.log('Creating request for user:', req.user.id);
+    console.log('Request body:', req.body);
     const studentProfile = await Student.findOne({ userId: req.user.id });
 
     if (!studentProfile) {
+      console.log('Student profile not found for user:', req.user.id);
       return res.status(400).json({
         success: false,
         message: 'Please create a student profile first'
       });
     }
 
+    console.log('Student profile found:', studentProfile._id);
     const request = await Request.create({
       studentId: studentProfile._id,
       ...req.body
     });
 
+    console.log('Request created successfully:', request._id);
     res.status(201).json({
       success: true,
       data: request
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @desc    Get student's own requests
+// @route   GET /api/students/requests
+// @access  Private (Student)
+exports.getStudentRequests = async (req, res) => {
+  try {
+    console.log('Fetching requests for user:', req.user.id);
+    const studentProfile = await Student.findOne({ userId: req.user.id });
+
+    if (!studentProfile) {
+      console.log('Student profile not found for user:', req.user.id);
+      return res.status(404).json({
+        success: false,
+        message: 'Student profile not found. Please create a profile first.'
+      });
+    }
+
+    console.log('Student profile found:', studentProfile._id);
+    const requests = await Request.find({ studentId: studentProfile._id })
+      .populate({
+        path: 'volunteerId',
+        populate: { path: 'userId', select: 'name email phone' }
+      })
+      .sort({ createdAt: -1 });
+
+    console.log('Found', requests.length, 'requests for student:', studentProfile._id);
+    res.status(200).json({
+      success: true,
+      count: requests.length,
+      data: requests
     });
   } catch (error) {
     res.status(500).json({

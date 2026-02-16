@@ -42,35 +42,38 @@ const Register = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.form}>
-        <h2 style={styles.title}>Register for Hand2Hand</h2>
-        {error && <div style={styles.error}>{error}</div>}
+    <div className="form-container">
+      <div className="form-card fade-in">
+        <h2 className="form-title">🎓 Join Hand2Hand</h2>
+        <p className="text-center text-secondary mb-3">Create your account</p>
+        {error && <div className="alert alert-error">{error}</div>}
         <form onSubmit={handleSubmit}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Name</label>
+          <div className="form-group">
+            <label className="form-label">Full Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               required
-              style={styles.input}
+              className="form-input"
+              placeholder="Enter your full name"
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Email</label>
+          <div className="form-group">
+            <label className="form-label">Email Address</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
-              style={styles.input}
+              className="form-input"
+              placeholder="Enter your email"
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Password</label>
+          <div className="form-group">
+            <label className="form-label">Password</label>
             <input
               type="password"
               name="password"
@@ -78,105 +81,44 @@ const Register = () => {
               onChange={handleChange}
               required
               minLength="6"
-              style={styles.input}
+              className="form-input"
+              placeholder="Enter your password (min 6 characters)"
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Phone</label>
+          <div className="form-group">
+            <label className="form-label">Phone Number</label>
             <input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleChange}
               required
-              style={styles.input}
+              className="form-input"
+              placeholder="Enter your phone number"
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Register as</label>
+          <div className="form-group">
+            <label className="form-label">Register as</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              style={styles.input}
+              className="form-select"
             >
-              <option value="student">Student</option>
-              <option value="volunteer">Volunteer</option>
+              <option value="student">🎓 Student</option>
+              <option value="volunteer">🤝 Volunteer</option>
             </select>
           </div>
-          <button type="submit" disabled={loading} style={styles.button}>
-            {loading ? 'Registering...' : 'Register'}
+          <button type="submit" disabled={loading} className="btn btn-primary btn-full">
+            {loading ? '🔄 Creating Account...' : '✨ Create Account'}
           </button>
         </form>
-        <p style={styles.link}>
-          Already have an account? <Link to="/login">Login here</Link>
+        <p className="link-text">
+          Already have an account? <Link to="/login" className="link">Login here</Link>
         </p>
       </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: 'calc(100vh - 200px)',
-    padding: '2rem'
-  },
-  form: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-    width: '100%',
-    maxWidth: '400px'
-  },
-  title: {
-    marginBottom: '1.5rem',
-    textAlign: 'center',
-    color: '#2c3e50'
-  },
-  formGroup: {
-    marginBottom: '1rem'
-  },
-  label: {
-    display: 'block',
-    marginBottom: '0.5rem',
-    color: '#34495e',
-    fontWeight: '500'
-  },
-  input: {
-    width: '100%',
-    padding: '0.75rem',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    boxSizing: 'border-box'
-  },
-  button: {
-    width: '100%',
-    padding: '0.75rem',
-    backgroundColor: '#3498db',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '1rem',
-    cursor: 'pointer',
-    marginTop: '1rem'
-  },
-  error: {
-    backgroundColor: '#e74c3c',
-    color: '#fff',
-    padding: '0.75rem',
-    borderRadius: '4px',
-    marginBottom: '1rem'
-  },
-  link: {
-    textAlign: 'center',
-    marginTop: '1rem',
-    color: '#7f8c8d'
-  }
 };
 
 export default Register;

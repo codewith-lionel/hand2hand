@@ -13,7 +13,7 @@ function App() {
   return (
     <AdminAuthProvider>
       <Router>
-        <div style={{ minHeight: '100vh', backgroundColor: '#ecf0f1' }}>
+        <div>
           <AdminNavbar />
           <Routes>
             <Route path="/" element={<Navigate to="/admin/login" />} />

@@ -12,60 +12,60 @@ const Navbar = () => {
   };
 
   return (
-    <nav style={styles.nav}>
-      <div style={styles.container}>
-        <Link to="/" style={styles.brand}>
-          Hand2Hand
+    <nav className="navbar">
+      <div className="navbar-container">
+        <Link to="/" className="navbar-brand">
+          🤝 Hand2Hand
         </Link>
-        <div style={styles.links}>
+        <div className="navbar-links">
           {user ? (
             <>
-              <span style={styles.user}>
-                {user.name} ({user.role})
+              <span className="navbar-user">
+                👤 {user.name} ({user.role})
               </span>
               {user.role === 'student' && (
                 <>
-                  <Link to="/student/dashboard" style={styles.link}>
-                    Dashboard
+                  <Link to="/student/dashboard" className="navbar-link">
+                    📊 Dashboard
                   </Link>
-                  <Link to="/student/profile" style={styles.link}>
-                    Profile
+                  <Link to="/student/profile" className="navbar-link">
+                    👤 Profile
                   </Link>
-                  <Link to="/student/volunteers" style={styles.link}>
-                    Find Volunteers
+                  <Link to="/student/volunteers" className="navbar-link">
+                    🔍 Find Volunteers
                   </Link>
-                  <Link to="/student/requests" style={styles.link}>
-                    My Requests
+                  <Link to="/student/requests" className="navbar-link">
+                    📝 My Requests
                   </Link>
                 </>
               )}
               {user.role === 'volunteer' && (
                 <>
-                  <Link to="/volunteer/dashboard" style={styles.link}>
-                    Dashboard
+                  <Link to="/volunteer/dashboard" className="navbar-link">
+                    📊 Dashboard
                   </Link>
-                  <Link to="/volunteer/profile" style={styles.link}>
-                    Profile
+                  <Link to="/volunteer/profile" className="navbar-link">
+                    👤 Profile
                   </Link>
-                  <Link to="/volunteer/requests" style={styles.link}>
-                    Requests
+                  <Link to="/volunteer/requests" className="navbar-link">
+                    📋 Requests
                   </Link>
-                  <Link to="/volunteer/assigned-exams" style={styles.link}>
-                    Assigned Exams
+                  <Link to="/volunteer/assigned-exams" className="navbar-link">
+                    ✅ Assigned Exams
                   </Link>
                 </>
               )}
-              <button onClick={handleLogout} style={styles.button}>
-                Logout
+              <button onClick={handleLogout} className="navbar-button">
+                🚪 Logout
               </button>
             </>
           ) : (
             <>
-              <Link to="/login" style={styles.link}>
-                Login
+              <Link to="/login" className="navbar-link">
+                🔑 Login
               </Link>
-              <Link to="/register" style={styles.link}>
-                Register
+              <Link to="/register" className="navbar-link">
+                ✨ Register
               </Link>
             </>
           )}
@@ -73,50 +73,6 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
-
-const styles = {
-  nav: {
-    backgroundColor: '#2c3e50',
-    padding: '1rem 0',
-    marginBottom: '2rem'
-  },
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '0 2rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  brand: {
-    color: '#fff',
-    fontSize: '1.5rem',
-    fontWeight: 'bold',
-    textDecoration: 'none'
-  },
-  links: {
-    display: 'flex',
-    gap: '1rem',
-    alignItems: 'center'
-  },
-  link: {
-    color: '#fff',
-    textDecoration: 'none',
-    padding: '0.5rem 1rem'
-  },
-  user: {
-    color: '#ecf0f1',
-    fontWeight: 'bold'
-  },
-  button: {
-    backgroundColor: '#e74c3c',
-    color: '#fff',
-    border: 'none',
-    padding: '0.5rem 1rem',
-    cursor: 'pointer',
-    borderRadius: '4px'
-  }
 };
 
 export default Navbar;

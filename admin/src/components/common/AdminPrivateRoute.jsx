@@ -6,7 +6,7 @@ const AdminPrivateRoute = ({ children }) => {
   const { admin, loading } = useAdminAuth();
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
+    return <div className="admin-loading">🔄 Loading...</div>;
   }
 
   if (!admin) {
