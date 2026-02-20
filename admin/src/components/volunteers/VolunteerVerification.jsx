@@ -12,9 +12,12 @@ const VolunteerVerification = () => {
   const fetchVolunteers = async () => {
     try {
       const response = await adminAPI.getAllVolunteers();
-      setVolunteers(response.data.data);
+      console.log('Volunteers response:', response.data);
+      setVolunteers(response.data.data || []);
     } catch (error) {
       console.error('Error fetching volunteers:', error);
+      console.error('Error details:', error.response?.data);
+      alert(`Error loading volunteers: ${error.response?.data?.message || error.message}`);
     } finally {
       setLoading(false);
     }
