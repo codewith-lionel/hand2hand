@@ -33,7 +33,7 @@ const ViewVolunteers = () => {
   };
 
   const applyFiltersAndSort = () => {
-    let filtered = [...volunteers];
+    let filtered = [...volunteers].filter(v => v.userId); // Filter out volunteers with null userId
     
     // Apply sorting
     filtered.sort((a, b) => {
@@ -155,9 +155,9 @@ const ViewVolunteers = () => {
                     ⭐ Top Volunteer
                   </span>
                 )}
-                <h3 className="text-primary">👤 {volunteer.userId.name}</h3>
-                <p><strong>📧 Email:</strong> {volunteer.userId.email}</p>
-                <p><strong>📞 Phone:</strong> {volunteer.userId.phone}</p>
+                <h3 className="text-primary">👤 {volunteer.userId?.name || 'N/A'}</h3>
+                <p><strong>📧 Email:</strong> {volunteer.userId?.email || 'N/A'}</p>
+                <p><strong>📞 Phone:</strong> {volunteer.userId?.phone || 'N/A'}</p>
                 <p><strong>📍 Location:</strong> {volunteer.location.city}, {volunteer.location.state}</p>
                 <p><strong>📚 Subjects:</strong> {volunteer.subjects.join(', ')}</p>
                 <p><strong>🗣️ Languages:</strong> {volunteer.languages.join(', ')}</p>

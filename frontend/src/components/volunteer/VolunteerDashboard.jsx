@@ -24,7 +24,13 @@ const VolunteerDashboard = () => {
       const [requestsRes, assignedRes, profileRes] = await Promise.all([
         volunteerAPI.getRequests(),
         volunteerAPI.getAssignedExams(),
-        volunteerAPI.getProfile().catch(() => null)
+        volunteerAPI.getProfile().catch((err) => {
+          // Log profile fetch error for debugging
+          if (err.response?.status === 403) {
+            console.error('Profile access denied. Please ensure you are logged in as a volunteer.');
+          }
+          return null;
+        })
       ]);
       
       const allRequests = requestsRes.data.data;
@@ -40,6 +46,10 @@ const VolunteerDashboard = () => {
       setProfile(profileRes?.data?.data || null);
     } catch (error) {
       console.error('Error fetching stats:', error);
+      // Check if it's a role mismatch error
+      if (error.response?.status === 403) {
+        console.error('Access denied. You may be logged in with the wrong role.');
+      }
     } finally {
       setLoading(false);
     }

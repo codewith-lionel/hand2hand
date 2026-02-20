@@ -23,6 +23,28 @@ api.interceptors.request.use(
   }
 );
 
+// Handle response errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 403) {
+      console.error('Access denied:', error.response.data);
+      // If it's a role mismatch, show helpful error
+      if (error.response.data?.userRole && error.response.data?.requiredRoles) {
+        console.warn(
+          `Role mismatch: You are logged in as '${error.response.data.userRole}' ` +
+          `but this endpoint requires: ${error.response.data.requiredRoles.join(' or ')}`
+        );
+      }
+    } else if (error.response?.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Auth API
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),

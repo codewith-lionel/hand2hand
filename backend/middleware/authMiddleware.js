@@ -39,10 +39,20 @@ exports.protect = async (req, res, next) => {
 // Grant access to specific roles
 exports.authorize = (...roles) => {
   return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+    
     if (!roles.includes(req.user.role)) {
+      console.log(`Authorization failed: User ${req.user.email} with role '${req.user.role}' tried to access route requiring roles: ${roles.join(', ')}`);
       return res.status(403).json({
         success: false,
-        message: `User role ${req.user.role} is not authorized to access this route`
+        message: `Access denied. This route requires ${roles.join(' or ')} role. Your current role is: ${req.user.role}`,
+        userRole: req.user.role,
+        requiredRoles: roles
       });
     }
     next();
