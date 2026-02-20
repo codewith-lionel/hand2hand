@@ -30,6 +30,31 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+// @desc    Get all volunteers with profiles
+// @route   GET /api/admin/volunteers
+// @access  Private (Admin)
+exports.getAllVolunteers = async (req, res) => {
+  try {
+    const volunteers = await Volunteer.find()
+      .populate({
+        path: 'userId',
+        select: 'name email phone role isVerified'
+      })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: volunteers.length,
+      data: volunteers
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 // @desc    Verify volunteer
 // @route   PUT /api/admin/volunteers/:id/verify
 // @access  Private (Admin)

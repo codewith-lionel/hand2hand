@@ -32,6 +32,7 @@ export const authAPI = {
 // Admin API
 export const adminAPI = {
   getAllUsers: (params) => adminApi.get('/admin/users', { params }),
+  getAllVolunteers: () => adminApi.get('/admin/volunteers'),
   verifyVolunteer: (id) => adminApi.put(`/admin/volunteers/${id}/verify`),
   getAllRequests: (params) => adminApi.get('/admin/requests', { params }),
   getStatistics: () => adminApi.get('/admin/statistics'),
