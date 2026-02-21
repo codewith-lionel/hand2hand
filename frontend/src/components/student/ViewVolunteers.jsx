@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { studentAPI } from '../../services/api';
 
 const ViewVolunteers = () => {
@@ -8,13 +8,29 @@ const ViewVolunteers = () => {
   const [sortBy, setSortBy] = useState('completedExams');
   const [loading, setLoading] = useState(true);
 
+  const applyFiltersAndSort = useCallback(() => {
+    let filtered = [...volunteers].filter(v => v.userId); // Filter out volunteers with null userId
+    
+    // Apply sorting
+    filtered.sort((a, b) => {
+      if (sortBy === 'completedExams') {
+        return b.completedExams - a.completedExams;
+      } else if (sortBy === 'name') {
+        return a.userId.name.localeCompare(b.userId.name);
+      }
+      return 0;
+    });
+    
+    setFilteredVolunteers(filtered);
+  }, [volunteers, sortBy]);
+
   useEffect(() => {
     fetchVolunteers();
   }, []);
 
   useEffect(() => {
     applyFiltersAndSort();
-  }, [volunteers, sortBy]);
+  }, [applyFiltersAndSort]);
 
   const fetchVolunteers = async () => {
     try {
@@ -30,22 +46,6 @@ const ViewVolunteers = () => {
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });
-  };
-
-  const applyFiltersAndSort = () => {
-    let filtered = [...volunteers].filter(v => v.userId); // Filter out volunteers with null userId
-    
-    // Apply sorting
-    filtered.sort((a, b) => {
-      if (sortBy === 'completedExams') {
-        return b.completedExams - a.completedExams;
-      } else if (sortBy === 'name') {
-        return a.userId.name.localeCompare(b.userId.name);
-      }
-      return 0;
-    });
-    
-    setFilteredVolunteers(filtered);
   };
 
   const handleSearch = async () => {
